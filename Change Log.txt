@@ -1,11 +1,15 @@
 /**
 * Base Form
 * Author: Justin Kimbrell (Objective HTML)
-* Version: 1.1.2
+* Version: 1.1.5
 * Build: 20120125
 * Copyright 2012 - All rights reserved
 * http://objectivehtml.com/
 */
+
+Version 1.1.5
+-------------
+Fixed bugs that prevented form action from returning to correct location.
 
 Version 1.1.2
 -------------

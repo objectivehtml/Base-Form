@@ -5,13 +5,12 @@
  *
  * A class that easily allows developers to create EE form tags.
  * 
- * @package		Authenticate
  * @subpackage	Libraries
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.1.2
- * @build		20120204
+ * @version		1.1.5
+ * @build		20120208
  */
 
 if(!class_exists('Base_form'))
@@ -46,7 +45,8 @@ if(!class_exists('Base_form'))
 		
 		public function open($hidden_fields = array())
 		{		
-			$this->action			= $this->param('action', $this->return);
+			$this->action			= empty($this->action) ? $this->param('action', $this->return) : $this->action;
+		
 			$this->class			= $this->param('class', $this->class);
 			$this->error_handling 	= $this->param('error_handling', $this->error_handling);
 			$this->hidden_fields	= array_merge($this->hidden_fields, $hidden_fields);
@@ -177,6 +177,12 @@ if(!class_exists('Base_form'))
 			$this->tagdata = $this->parse($errors);
 				
 			$this->EE->load->helper('form');
+			$this->EE->load->helper('url');
+			
+			if(!preg_match("/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/", $this->action, $mathes))
+			{
+				$this->action = rtrim($this->current_url(FALSE), '/') . '/' . ltrim($this->action, '/');
+			}
 			
 			return form_open($this->action, $params, $hidden_fields) . $this->tagdata . '</form>';
 		}
@@ -237,94 +243,7 @@ if(!class_exists('Base_form'))
 				
 			return $this->EE->TMPL->parse_variables(trim($this->EE->TMPL->tagdata), $vars);
 		}
-		
-		/*
-		public function prep_sql_fieldname($field_array, $user_value = FALSE, $to_append = TRUE)
-		{	
-			$reserved_fields = array('title', 'expiration_date', 'entry_date', 'author_id');
-			$return = FALSE;
-			$string = array();
-			
-			//Converts a single field to an array
-			$field_array = is_array($field_array) ? $field_array : array($field_array => '');
-			
-			//Loops through the field array
-			foreach($field_array as $field_name => $field_value)
-			{	
-				$value = FALSE;
 				
-				//Fallsback to the post variable if no value is passed
-				$value = !empty($field_value) ? $field_value : $user_value;			
-				$value = $value ? $value : $this->EE->input->post($field_name);
-													
-				//Creates the SQL field name by removed the reserved terms
-				$sql_field_name = str_replace($this->reserved_terms, '', $field_name);
-				
-				//Gets the field data and if the field exists, the sql statement is created
-				$field_data = $this->EE->channel_data->get_field_by_name($sql_field_name);
-				
-				if($field_data->num_rows() > 0)
-				{	
-					//Validates that a value is not FALSE
-					if($value !== FALSE && !empty($value) || $to_append == FALSE)
-					{
-						//If to_append is TRUE, then the operator is appended
-						if($to_append == TRUE)
-						{			
-							//Converts a value string to a variable
-							$values = is_array($value) ? $value : array($value);
-							
-							//Loops through the values array and creates the SQL conditions
-							foreach($values as $value)
-							{
-								$operator = $this->_prep_value($field_name, $value);
-															
-								$string[] = '`field_id_'.$field_data->row('field_id').'` '.$operator;
-							}
-						}
-						else
-						{					
-							$string[] = '`field_id_'.$field_data->row('field_id').'`';
-						}
-					}
-				}			
-			}
-			
-			return $string;
-		}
-		
-		public function create_id_string($results)
-		{		
-			$id = NULL;
-			
-			foreach($results as $row)
-				$id .= $row->entry_id . '|';
-			
-			return rtrim($id, '|');
-		}
-		
-		public function prep_value($field_name, $value)
-		{
-			
-			if(is_string($value))
-			{
-				$value = '\''.$value.'\'';
-			}
-			
-			//Preps conditional statement by testing the field_name for keywords
-			if(strpos($field_name, '_min'))
-				$operator = ' >= '.$value.'';
-			else if(strpos($field_name, '_max'))
-				$operator = ' <= '.$value.'';
-			else if(strpos($field_name, '_like'))
-				$operator = ' LIKE \'%'.str_replace('\'', '', $value).'%\'';
-			else
-				$operator = ' = '.$value.' ';
-		
-			return $operator;
-		}
-		*/
-		
 		public function validate($required_fields = array(), $additional_rules = array())
 		{
 			$vars = array();
@@ -391,13 +310,17 @@ if(!class_exists('Base_form'))
 			return $this->EE->functions->redirect($url);
 		}
 		
-		public function current_url()
+		public function current_url($uri_segments = TRUE)
 		{
 			$segments = $this->EE->uri->segment_array();
 			
 			$base_url = (!empty($_SERVER['HTTPS'])) ? 'https://'.$_SERVER['SERVER_NAME'] : 'http://'.$_SERVER['SERVER_NAME'];
+			$uri	  = '';
 			
-			$uri = '/' . implode('/', $segments);
+			if($uri_segments)
+			{
+				$uri = '/' . implode('/', $segments);
+			}
 			
 			return $base_url . $uri;
 		}
@@ -434,5 +357,6 @@ if(!class_exists('Base_form'))
 			
 			return $param;			
 		}
+			
 	}
 }
