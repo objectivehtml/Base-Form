@@ -1,11 +1,19 @@
 /**
 * Base Form
 * Author: Justin Kimbrell (Objective HTML)
-* Version: 1.1.5
-* Build: 20120125
+* Version: 1.1.7
+* Build: 20120212
 * Copyright 2012 - All rights reserved
 * http://objectivehtml.com/
 */
+
+Version 1.1.7
+-------------
+Fixed bugs that caused errors when anything other than port 80 was used.
+
+Version 1.1.6
+-------------
+Fixed bugs that prevented form action not with localhost URL's.
 
 Version 1.1.5
 -------------
