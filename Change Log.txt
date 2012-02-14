@@ -1,11 +1,15 @@
 /**
 * Base Form
 * Author: Justin Kimbrell (Objective HTML)
-* Version: 1.1.7
-* Build: 20120212
+* Version: 1.1.8
+* Build: 20120213
 * Copyright 2012 - All rights reserved
 * http://objectivehtml.com/
 */
+
+Version 1.1.8
+-------------
+Added a group_x_return parameter for dynamic redirecting based on member group.
 
 Version 1.1.7
 -------------

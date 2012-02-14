@@ -9,8 +9,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.1.7
- * @build		20120212
+ * @version		1.1.8
+ * @build		20120213
  */
 
 if(!class_exists('Base_form'))
@@ -20,6 +20,7 @@ if(!class_exists('Base_form'))
 		public $action					= '';
 		public $additional_params		= array('novalidate', 'onsubmit');
 		public $class					= '';
+		public $groups					= array();
 		public $hidden_fields			= array();
 		public $error_handling			= FALSE;
 		public $errors					= array();
@@ -28,7 +29,6 @@ if(!class_exists('Base_form'))
 		public $name					= '';	
 		public $prefix					= '';
 		public $rules					= array();
-		public $reserved_terms  		= array('', '_min', '_max', '_like');
 		public $return					= FALSE;
 		public $required				= '';
 		public $secure_action			= FALSE;
@@ -44,10 +44,14 @@ if(!class_exists('Base_form'))
 		}
 		
 		public function open($hidden_fields = array(), $fields = FALSE, $entry = FALSE)
-		{		
+		{	
+			$this->secure_action 	= $this->param('secure_action', $this->secure_action, TRUE);
+			$this->secure_return 	= $this->param('secure_return', $this->secure_return, TRUE);
 			$this->action			= empty($this->action) ? $this->param('action', $this->return) : $this->action;
-		
+			$this->action			= $this->secure_url($this->action, $this->secure_action);		
 			$this->class			= $this->param('class', $this->class);
+			$this->groups			= $this->EE->channel_data->get_member_groups()->result_array();
+			
 			$this->error_handling 	= $this->param('error_handling', $this->error_handling);
 			$this->hidden_fields	= array_merge($this->hidden_fields, $hidden_fields);
 			$this->id				= $this->param('id', $this->id);
@@ -57,9 +61,10 @@ if(!class_exists('Base_form'))
 			$this->required			= $this->required ? explode('|', $this->required) : FALSE;
 			$this->rules 			= $this->param('rules', $this->rules);
 			$this->return 			= $this->param('return', $this->return);
-			$this->secure_action 	= $this->param('secure_action', $this->secure_action, TRUE);
-			$this->secure_return 	= $this->param('secure_return', $this->secure_return, TRUE);
 			
+			
+			
+			// Loops through parameters and looks for any defined rules
 			if($this->EE->TMPL->tag_data[0]['params'])
 			{
 				foreach($this->EE->TMPL->tag_data[0]['params'] as $param => $rule)
@@ -71,6 +76,7 @@ if(!class_exists('Base_form'))
 				}
 			}
 			
+			// Merges the default hidden_fields			
 			$hidden_fields  = array_merge($this->hidden_fields, array(
 				'XID'	   => '{XID_HASH}',
 				'site_url' => $this->param('site_url') ? $this->param('site_url') : $this->EE->config->item('site_url'),
@@ -79,6 +85,18 @@ if(!class_exists('Base_form'))
 				'return'		=> $this->return
 			));
 			
+			// Loops through the member groups looking for dynamic redirects
+			foreach($this->groups as $group)
+			{
+				$group_redirect = $this->param('group_'.$group['group_id'].'_return');
+				
+				if($group_redirect)
+				{
+					$hidden_fields['group_'.$group['group_id'].'_return'] = $group_redirect;
+				}
+			}
+		
+			// Add the rules to the hidden fields if they exist
 			if(count($this->rules) > 0)
 			{
 				foreach($this->rules as $param => $rule)
@@ -86,14 +104,16 @@ if(!class_exists('Base_form'))
 					$hidden_fields['rule['.$param.']'] = $rule;
 				}	
 			}
-						
+			
+			// Default form parameters			
 			$params = array(
 				'method' => 'post',
 				'class'	 => $this->class,
 				'id'	 => $this->id,
 				'name'	 => $this->name
 			);
-					
+				
+			// Append the additional_parameters	
 			foreach($this->additional_params as $param)
 			{
 				if($this->param($param))
@@ -102,8 +122,10 @@ if(!class_exists('Base_form'))
 				}
 			}
 			
-			$this->validate();
+			// Validate the form
+			$this->validate();			
 			
+			// Create the error array
 			$errors = array(
 				array(
 					'errors'			  => array(array()),
@@ -115,44 +137,21 @@ if(!class_exists('Base_form'))
 				)
 			);
 			
-			$post_vars   = array();
+			// Add the POST vars to the template with a 'post:' prefix.
+			$post = $this->add_prefix('post', $_POST);
 			
-			foreach($_POST as $post_field => $post_value)
-			{
-				$post = $this->EE->input->post($post_field);
-				
-				if($post)
-				{	
-					if(!is_array($post))
-					{
-						$post_vars['post:'.$post_field] = $post;
-					}
-					else
-					{
-						foreach($post as $post_index => $post_array)
-						{
-							if(!empty($post_array))
-							{
-								$post_vars['post:'.$post_field][0] = $post;
-							}
-						}
-					}
-				}
-				else
-				{
-					$post_vars['post:'.$post_field] = NULL;
-				}
-			}
-					
+			// If channel fields and an entry exists, parse the fields with the data
 			if($fields && $entry)
 			{
 				$this->tagdata = $this->parse_fields($fields, $entry);				
 			}
-					
-			$this->tagdata = $this->parse(array($post_vars));
+			
+			// Parse the template variables
+			$this->tagdata = $this->parse(array($post));
 					
 			$errors = array();
 			
+			// If the field error count is greater than zero, then add errors
 			if(count($this->field_errors) > 0)
 			{
 				$x = 0;
@@ -167,6 +166,7 @@ if(!class_exists('Base_form'))
 				$errors[0]['total_field_errors'] = count($this->field_errors);
 			}
 			
+			// If the global error count is greater than zero, then add errors
 			if(count($this->errors) > 0)
 			{
 				$x = 0;
@@ -179,17 +179,20 @@ if(!class_exists('Base_form'))
 				
 				$errors[0]['total_global_errors'] = count($this->errors);
 			}
-						
+			
+			// Parse the tagdata again for errors
 			$this->tagdata = $this->parse($errors);
 				
 			$this->EE->load->helper('form');
 			$this->EE->load->helper('url');
 			
+			// Make sure the form POSTs back to the same exact URL
 			if(!preg_match("/(http|https|ftp|ftps)\:\/\/?/", $this->action, $mathes))
 			{
 				$this->action = rtrim($this->current_url(FALSE), '/') . '/' . ltrim($this->action, '/');
 			}
 			
+			// Return the form
 			return form_open($this->action, $params, $hidden_fields) . $this->tagdata . '</form>';
 		}
 		
@@ -304,7 +307,7 @@ if(!class_exists('Base_form'))
 			}
 		}
 		
-		public function redirect()
+		public function redirect($group_id = FALSE)
 		{
 			$url = $this->return;
 			
@@ -312,18 +315,35 @@ if(!class_exists('Base_form'))
 			{
 				$url = $_POST['return'];
 			}
-				
+			
 			if(isset($_POST['secure_return']))
 			{
 				$this->secure_return = (int) $_POST['secure_return'] == 1 ? TRUE : FALSE;
 			}
 			
-			if($this->secure_return === TRUE)
+			if($group_id)
+			{
+				$group_redirect = $this->EE->input->post('group_'.$group_id.'_return');
+				
+				if($group_redirect)
+				{
+					$url = $group_redirect;
+				}
+			}
+			
+			$url = $this->secure_url($url, $this->secure_return);
+						
+			return $this->EE->functions->redirect($url);
+		}
+		
+		public function secure_url($url, $secure = FALSE)
+		{		
+			if($secure === TRUE)
 			{
 				$url = str_replace('http://', 'https://', $url);
 			}
 			
-			return $this->EE->functions->redirect($url);
+			return $url;
 		}
 		
 		public function current_url($uri_segments = TRUE)
@@ -375,6 +395,43 @@ if(!class_exists('Base_form'))
 			
 			return $param;			
 		}
-			
+		
+		/**
+		 * Channel Data Utility Method 
+		 *
+		 * Add a prefix to an result array or a single row.
+		 * Must pass an array.
+		 *
+		 * @access	public
+		 * @param	string	The prefix
+		 * @param	array	The data to prefix
+		 * @param	string	The delimiting value
+		 * @return	array
+		 */
+		 public function add_prefix($prefix, $data, $delimeter = ':')
+		 {
+		 	$new_data = array();
+		 	
+		 	foreach($data as $data_index => $data_value)
+		 	{
+		 		if(is_array($data_value))
+		 		{
+		 			$new_row = array();
+		 			
+		 			foreach($data_value as $inner_index => $inner_value)
+		 			{
+		 				$new_row[$prefix . $delimeter . $inner_index] = $inner_value;
+		 			}
+		 			
+		 			$new_data[$data_index] = $new_row;
+		 		}
+		 		else
+		 		{
+		 			$new_data[$prefix . $delimeter . $data_index] = $data_value;
+		 		}
+		 	}
+		 	
+		 	return $new_data;	
+		 }	
 	}
 }
