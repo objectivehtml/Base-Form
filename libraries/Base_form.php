@@ -62,7 +62,7 @@ if(!class_exists('Base_form'))
 			$this->rules 			= $this->param('rules', $this->rules);
 			$this->return 			= $this->param('return', $this->return);
 			$this->return_var		= $this->param('return_var');
-			$this->return_segment	= $this->param('return_semgment');
+			$this->return_segment	= $this->param('return_segment');
 
 			if($this->return_var)
 			{
@@ -73,7 +73,7 @@ if(!class_exists('Base_form'))
 			{
 				$segments     = $this->EE->uri->segment_array();
 				$segments     = array_slice($segments, (int) $this->return_segment);
-				$this->return = implode('/', $segments);
+				$this->return = '/'.implode('/', $segments);
 			}			
 
 			// Loops through parameters and looks for any defined rules
