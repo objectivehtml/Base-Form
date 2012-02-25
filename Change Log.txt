@@ -1,11 +1,15 @@
 /**
 * Base Form
 * Author: Justin Kimbrell (Objective HTML)
-* Version: 1.1.8
-* Build: 20120213
+* Version: 1.1.9
+* Build: 20120224
 * Copyright 2012 - All rights reserved
 * http://objectivehtml.com/
 */
+
+Version 1.1.9 - 02/24/2012
+--------------------------
+Added return_var and return_segment for better redirect fascilitation.
 
 Version 1.1.8
 -------------

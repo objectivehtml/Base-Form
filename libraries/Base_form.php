@@ -9,8 +9,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.1.8
- * @build		20120213
+ * @version		1.1.9
+ * @build		20120224
  */
 
 if(!class_exists('Base_form'))
@@ -61,9 +61,21 @@ if(!class_exists('Base_form'))
 			$this->required			= $this->required ? explode('|', $this->required) : FALSE;
 			$this->rules 			= $this->param('rules', $this->rules);
 			$this->return 			= $this->param('return', $this->return);
+			$this->return_var		= $this->param('return_var');
+			$this->return_segment	= $this->param('return_semgment');
+
+			if($this->return_var)
+			{
+				$this->return   = $this->EE->input->get_post('return');
+			}
 			
-			
-			
+			if($this->return_segment)
+			{
+				$segments     = $this->EE->uri->segment_array();
+				$segments     = array_slice($segments, (int) $this->return_segment);
+				$this->return = implode('/', $segments);
+			}			
+
 			// Loops through parameters and looks for any defined rules
 			if($this->EE->TMPL->tag_data[0]['params'])
 			{
