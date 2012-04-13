@@ -1,12 +1,16 @@
 /**
 * Base Form
 * Author: Justin Kimbrell (Objective HTML)
-* Version: 1.2.0
-* Build: 20120410
+* Version: 1.2.1
+* Build: 20120413
 * Copyright 2012 - All rights reserved
 * http://objectivehtml.com/
 */
 
+
+Version 1.2.1 - 04/10/2012
+--------------------------
+Fixed an issue that caused the form to not work properly if the open() method was called more than once.
 
 Version 1.2.0 - 04/10/2012
 --------------------------

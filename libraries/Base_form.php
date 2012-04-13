@@ -9,7 +9,7 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.2.0
+ * @version		1.2.1
  * @build		20120410
  */
 
@@ -44,8 +44,32 @@ if(!class_exists('Base_form'))
 			$this->tagdata 	= $this->EE->TMPL->tagdata;
 		}
 		
+		public function clear()
+		{
+			$this->action            = '';
+			$this->additional_params = array('novalidate', 'onsubmit');
+			$this->class             = '';
+			$this->groups            = array();
+			$this->hidden_fields     = array();
+			$this->error_handling    = array();
+			$this->errors            = array();
+			$this->field_errors      = array();
+			$this->id                = '';
+			$this->post              = '';
+			$this->name              = '';
+			$this->prefix            = '';
+			$this->rules             = array();
+			$this->return            = FALSE;
+			$this->required          = '';
+			$this->secure_action     = FALSE;
+			$this->secure_return     = FALSE;
+			$this->tagdata           = '';
+		}
+		
 		public function open($hidden_fields = array(), $fields = FALSE, $entry = FALSE)
 		{	
+			$this->clear();
+			
 			$this->secure_action 	= $this->param('secure_action', $this->secure_action, TRUE);
 			$this->secure_return 	= $this->param('secure_return', $this->secure_return, TRUE);
 			$this->action			= empty($this->action) ? $this->param('action', $this->return) : $this->action;
