@@ -10,11 +10,13 @@
 
 Version 1.2.1 - 04/10/2012
 --------------------------
-Fixed an issue that caused the form to not work properly if the open() method was called more than once.
+- Fixed an issue that caused the form to not work properly if the open() method was called more than once.
+- Added ability to return data via AJAX
+- Added an associative index to the global errors array
 
 Version 1.2.0 - 04/10/2012
 --------------------------
-Fixed a long time bug that with the form action not pointing to the correct URL.
+- Fixed a long time bug that with the form action not pointing to the correct URL.
 
 Version 1.1.10 - 03/29/2012
 ---------------------------
