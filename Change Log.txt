@@ -1,11 +1,20 @@
 /**
 * Base Form
 * Author: Justin Kimbrell (Objective HTML)
-* Version: 1.1.9
-* Build: 20120224
+* Version: 1.2.0
+* Build: 20120410
 * Copyright 2012 - All rights reserved
 * http://objectivehtml.com/
 */
+
+
+Version 1.2.0 - 04/10/2012
+--------------------------
+Fixed a long time bug that with the form action not pointing to the correct URL.
+
+Version 1.1.10 - 03/29/2012
+---------------------------
+- Added the ability to change the form method.
 
 Version 1.1.9 - 02/24/2012
 --------------------------

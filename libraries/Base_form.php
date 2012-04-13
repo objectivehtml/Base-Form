@@ -9,8 +9,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.1.9
- * @build		20120224
+ * @version		1.2.0
+ * @build		20120410
  */
 
 if(!class_exists('Base_form'))
@@ -26,6 +26,7 @@ if(!class_exists('Base_form'))
 		public $errors					= array();
 		public $field_errors 			= array();
 		public $id						= '';
+		public $method					= 'post';	
 		public $name					= '';	
 		public $prefix					= '';
 		public $rules					= array();
@@ -119,7 +120,7 @@ if(!class_exists('Base_form'))
 			
 			// Default form parameters			
 			$params = array(
-				'method' => 'post',
+				'method' => $this->method,
 				'class'	 => $this->class,
 				'id'	 => $this->id,
 				'name'	 => $this->name
@@ -362,7 +363,9 @@ if(!class_exists('Base_form'))
 		{
 			$segments = $this->EE->uri->segment_array();
 			
-			$base_url = (!empty($_SERVER['HTTPS'])) ? 'https://'.$_SERVER['SERVER_NAME'] : 'http://'.$_SERVER['SERVER_NAME'];
+			
+			$base_url = (!strstr($_SERVER['SCRIPT_URI'], 'https://') ? 'http://' : 'http://' ) . $_SERVER['HTTP_HOST'];
+			
 			$uri	  = '';
 			
 			$port = $_SERVER['SERVER_PORT'] == "80" ? NULL : ':' . $_SERVER['SERVER_PORT'];
