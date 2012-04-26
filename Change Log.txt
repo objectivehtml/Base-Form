@@ -1,12 +1,16 @@
 /**
 * Base Form
 * Author: Justin Kimbrell (Objective HTML)
-* Version: 1.2.2
-* Build: 20120413
+* Version: 1.2.3
+* Build: 20120426
 * Copyright 2012 - All rights reserved
 * http://objectivehtml.com/
 */
 
+
+Version 1.2.3 - 04/26/2012
+--------------------------
+- Fixed an issue with the form action not returning to the correct page.
 
 Version 1.2.2 - 04/13/2012
 --------------------------

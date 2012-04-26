@@ -9,8 +9,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.2.2
- * @build		20120413
+ * @version		1.2.3
+ * @build		20120426
  */
 
 if(!class_exists('Base_form'))
@@ -89,7 +89,7 @@ if(!class_exists('Base_form'))
 			$this->ajax_response	= $this->param('ajax_response', $this->param('ajax', $this->ajax_response));
 			$this->secure_action 	= $this->param('secure_action', $this->secure_action, TRUE);
 			$this->secure_return 	= $this->param('secure_return', $this->secure_return, TRUE);
-			$this->action			= empty($this->action) ? $this->param('action', $this->return) : $this->action;
+			$this->action			= empty($this->action) ? $this->param('action', $this->current_url()) : $this->action;
 			$this->action			= $this->secure_url($this->action, $this->secure_action);		
 			
 			$this->class			= $this->param('class', $this->class);
