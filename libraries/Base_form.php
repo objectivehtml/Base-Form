@@ -9,8 +9,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.2.3
- * @build		20120426
+ * @version		1.2.4
+ * @build		20120512
  */
 
 if(!class_exists('Base_form'))
@@ -86,7 +86,8 @@ if(!class_exists('Base_form'))
 				$this->return = '/'.implode('/', $segments);
 			}			
 
-			$this->ajax_response	= $this->param('ajax_response', $this->param('ajax', $this->ajax_response));
+			$this->ajax_response	= $this->param('ajax_response', $this->param('ajax', $this->ajax_response, TRUE), TRUE);
+		
 			$this->secure_action 	= $this->param('secure_action', $this->secure_action, TRUE);
 			$this->secure_return 	= $this->param('secure_return', $this->secure_return, TRUE);
 			$this->action			= empty($this->action) ? $this->param('action', $this->current_url()) : $this->action;
@@ -123,7 +124,7 @@ if(!class_exists('Base_form'))
 				'site_url' => $this->param('site_url') ? $this->param('site_url') : $this->EE->config->item('site_url'),
 				'required' 		=> $this->required,
 				'secure_return' => $this->secure_return,
-				'ajax_response'	=> $this->ajax_response ? 'y' : 'n',
+				'ajax_response'	=> (boolean) $this->ajax_response ? 'y' : 'n',
 				'base_form_submit' => TRUE,
 				'return'		=> $this->return
 			));
@@ -401,18 +402,11 @@ if(!class_exists('Base_form'))
 		{
 			$segments = $this->EE->uri->segment_array();
 			
-			$http = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 'https://' : 'http://';
-			
-			$port = $_SERVER['SERVER_PORT'] == '80' || $_SERVER['SERVER_PORT'] == '443' ? NULL : ':' . $_SERVER['SERVER_PORT'];
-			
-			if(!isset($_SERVER['SCRIPT_URI']))
-			{				
-				 $_SERVER['SCRIPT_URI'] = $http . $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'];
-			}
-			
-			$base_url = $http . $_SERVER['HTTP_HOST'];
+			$base_url = $this->base_url();
 			
 			$uri	  = '';
+			
+			$port = $_SERVER['SERVER_PORT'] == '80' || $_SERVER['SERVER_PORT'] == '443' ? NULL : ':' . $_SERVER['SERVER_PORT'];
 			
 			if($uri_segments)
 			{
@@ -429,6 +423,18 @@ if(!class_exists('Base_form'))
 			return $base_url . $port . $uri . $get;
 		}
 		
+		public function base_url()
+		{
+			$http = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 'https://' : 'http://';
+			
+			if(!isset($_SERVER['SCRIPT_URI']))
+			{				
+				 $_SERVER['SCRIPT_URI'] = $http . $_SERVER['HTTP_HOST']. $_SERVER['REQUEST_URI'];
+			}
+			
+			return $http . $_SERVER['HTTP_HOST'];
+		}
+
 		public function parse($vars, $tagdata = FALSE)
 		{
 			if($tagdata === FALSE)

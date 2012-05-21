@@ -1,12 +1,16 @@
 /**
 * Base Form
 * Author: Justin Kimbrell (Objective HTML)
-* Version: 1.2.3
-* Build: 20120426
+* Version: 1.2.4
+* Build: 20120510
 * Copyright 2012 - All rights reserved
 * http://objectivehtml.com/
 */
 
+Version 1.2.4 - 05/10/2012
+--------------------------
+- Broke apart the current_url() into a secondary method called base_url().
+- Fixed an issue with ajax_response parameter not getting passed as boolean value.
 
 Version 1.2.3 - 04/26/2012
 --------------------------
