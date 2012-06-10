@@ -9,43 +9,57 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.2.4
- * @build		20120512
+ * @version		1.2.6
+ * @build		20120608
  */
 
 if(!class_exists('Base_form'))
 {
 	class Base_form {
 		
-		public $action					= '';
-		public $additional_params		= array('novalidate', 'onsubmit');
-		public $ajax_response			= FALSE;
-		public $class					= '';
-		public $groups					= array();
-		public $hidden_fields			= array();
-		public $error_handling			= FALSE;
-		public $errors					= array();
-		public $field_errors 			= array();
-		public $id						= '';
-		public $method					= 'post';	
-		public $name					= '';	
-		public $prefix					= '';
-		public $rules					= array();
-		public $return					= FALSE;
-		public $required				= '';
-		public $secure_action			= FALSE;
-		public $secure_return			= FALSE;
-		public $tagdata					= '';
-			
+		public $action            = '';
+		public $additional_params = array('novalidate', 'onsubmit');
+		public $ajax_response     = FALSE;
+		public $class             = '';
+		public $groups            = array();
+		public $hidden_fields     = array();
+		public $error_handling    = FALSE;
+		public $errors            = array();
+		public $field_errors      = array();
+		public $id                = '';
+		public $method            = 'post';	
+		public $name              = '';	
+		public $prefix            = '';
+		public $rules             = array();
+		public $return            = FALSE;
+		public $required          = '';
+		public $secure_action     = FALSE;
+		public $secure_return     = FALSE;
+		public $tagdata           = '';
+		public $key               = 'QZ@n/YsAgDi5Lz)o|RscOX\'rLY,pttpNPQ-83FP[`J_q~&Pxj7h{sA2`e5\v:#x';
+		public $validation_field  = 'base_form_submit';
+		
 		public function __construct()
 		{
 			$this->EE =& get_instance();
+			
+			// Load user defined key from config if one exists, if not use default.
+			// Obviously it's much more secure to use your own key!
+			
+			$this->EE->load->library('encrypt');
+			
+			$saved_key = config_item('encryption_key');
+			
+			if(!empty($saved_key))
+			{
+				$this->key = $saved_key;
+			}
 			
 			$this->return 	= $this->current_url();
 			$this->tagdata 	= $this->EE->TMPL->tagdata;
 		}
 		
-		public function clear()
+		public function clear($clear_errors = TRUE)
 		{
 			$this->action            = '';
 			$this->additional_params = array('novalidate', 'onsubmit');
@@ -53,20 +67,27 @@ if(!class_exists('Base_form'))
 			$this->class             = '';
 			$this->groups            = array();
 			$this->hidden_fields     = array();
-			$this->error_handling    = array();
-			$this->errors            = array();
-			$this->field_errors      = array();
+			$this->rules             = array();
+			$this->error_handling    = FALSE;
+			
+			if($clear_errors)
+			{
+				$this->errors            = array();
+				$this->field_errors      = array();
+			}
+			
 			$this->id                = '';
 			$this->post              = '';
+			$this->prefix			 = '';
+			$this->method            = 'post';
 			$this->name              = '';
-			$this->prefix            = '';
-			$this->rules             = array();
-			$this->return            = FALSE;
+			$this->return            = '';
 			$this->required          = '';
 			$this->secure_action     = FALSE;
 			$this->secure_return     = FALSE;
-			$this->tagdata           = $this->EE->TMPL->tagdata;
+			$this->tagdata           = '';
 		}
+		
 		
 		public function open($hidden_fields = array(), $fields = FALSE, $entry = FALSE)
 		{	
@@ -242,7 +263,41 @@ if(!class_exists('Base_form'))
 			}
 			
 			// Return the form
-			return form_open($this->action, $params, $hidden_fields) . $this->tagdata . '</form>';
+			return form_open($this->action, $params, $this->encode($hidden_fields)) . $this->tagdata . '</form>';
+		}
+		
+		public function encode($fields = array())
+		{
+			if(is_array($fields))
+			{
+				foreach($fields as $index => $value)
+				{
+					$fields[$index] = $this->EE->encrypt->encode($value, $this->key);
+				}
+			}
+			else
+			{
+				$fields = $this->EE->encrypt->encode($fields, $this->key);
+			}
+			
+			return $fields;
+		}
+		
+		public function decode($fields = array())
+		{
+			if(is_array($fields))
+			{
+				foreach($fields as $index => $value)
+				{
+					$fields[$index] = $this->EE->encrypt->decode($value, $this->key);
+				}
+			}
+			else
+			{
+				$fields = $this->EE->encrypt->decode($fields, $this->key);
+			}
+			
+			return $fields;
 		}
 		
 		public function set_rule($field_name, $rule)
@@ -314,7 +369,7 @@ if(!class_exists('Base_form'))
 				
 		public function validate($required_fields = array(), $additional_rules = array())
 		{
-			if(isset($_POST['base_form_submit']))
+			if(isset($_POST[$this->validation_field]))
 				{
 				$vars = array();
 				
