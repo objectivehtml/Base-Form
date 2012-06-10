@@ -9,7 +9,7 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.2.6
+ * @version		1.3.0
  * @build		20120608
  */
 

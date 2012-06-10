@@ -1,11 +1,16 @@
 /**
 * Base Form
 * Author: Justin Kimbrell (Objective HTML)
-* Version: 1.2.4
-* Build: 20120510
+* Version: 1.3.0
+* Build: 20120609
 * Copyright 2012 - All rights reserved
 * http://objectivehtml.com/
 */
+
+Version 1.3.0 - 06/09/2012
+--------------------------
+- (Bug Fix) Fixed an issue with clear() method clearing errors when it shouldn't
+- (Feature) Added encoding/decoding to the core class.
 
 Version 1.2.4 - 05/10/2012
 --------------------------
