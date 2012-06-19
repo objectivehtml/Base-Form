@@ -9,8 +9,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.3.0
- * @build		20120608
+ * @version		1.3.12
+ * @build		20120619
  */
 
 if(!class_exists('Base_form'))
@@ -23,7 +23,7 @@ if(!class_exists('Base_form'))
 		public $class             = '';
 		public $groups            = array();
 		public $hidden_fields     = array();
-		public $error_handling    = FALSE;
+		public $error_handling    = 'inline';
 		public $errors            = array();
 		public $field_errors      = array();
 		public $id                = '';
@@ -68,7 +68,7 @@ if(!class_exists('Base_form'))
 			$this->groups            = array();
 			$this->hidden_fields     = array();
 			$this->rules             = array();
-			$this->error_handling    = FALSE;
+			$this->error_handling    = 'inline';
 			
 			if($clear_errors)
 			{
@@ -262,6 +262,11 @@ if(!class_exists('Base_form'))
 				$this->action = rtrim($this->current_url(FALSE), '/') . '/' . ltrim($this->action, '/');
 			}
 			
+			if($this->error_handling != 'inline' && count(array_merge($this->field_errors, $this->errors)) > 0)
+			{
+				$this->EE->output->show_user_error('general', array_merge($this->field_errors, $this->errors));
+			}
+			
 			// Return the form
 			return form_open($this->action, $params, $this->encode($hidden_fields)) . $this->tagdata . '</form>';
 		}
@@ -319,7 +324,7 @@ if(!class_exists('Base_form'))
 		
 		public function set_field_error($field, $message)
 		{
-			$this->field_errors[$field] = $message;
+			$this->field_errors[$this->decode($field)] = $message;
 		}
 		
 		public function parse_fields($field_data, $entry_data, $prefix = '')
@@ -376,17 +381,17 @@ if(!class_exists('Base_form'))
 				$this->EE->load->library('form_validation');
 				$this->EE->form_validation->set_error_delimiters('', '');
 				
-				$validate_fields = isset($_POST['required']) ? $_POST['required'] : $this->required;
+				$validate_fields = isset($_POST['required']) ? $this->decode($_POST['required']) : $this->required;
 				$validate_fields = !is_array($validate_fields) ? explode('|', $validate_fields) : $validate_fields;
 				
 				$required_fields = array_merge($required_fields, $validate_fields);
-				
+								
 				foreach($required_fields as $field)
 				{
 					$this->EE->form_validation->set_rules($field, ucwords(str_replace(array('-', '_'), ' ', $field)), 'trim|required');
 				}
 				
-				$rules = array_merge((isset($_POST['rule']) ? $_POST['rule'] : array()), $this->rules);
+				$rules = $this->decode(array_merge((isset($_POST['rule']) ? $_POST['rule'] : array()), $this->rules));
 				
 				foreach($rules as $field => $rule)
 				{
@@ -402,9 +407,9 @@ if(!class_exists('Base_form'))
 					$error_count = 0;	
 					
 					foreach($required_fields as $field)
-					{		
+					{	
 						$error = form_error($field);
-								
+							
 						if($error !== FALSE && !empty($error))
 						{	
 							$this->set_field_error($field, $error);
