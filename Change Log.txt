@@ -1,14 +1,19 @@
 /**
 * Base Form
 * Author: Justin Kimbrell (Objective HTML)
-* Version: 1.3.12
-* Build: 20120619
+* Version: 1.3.13
+* Build: 20120627
 * Copyright 2012 - All rights reserved
 * http://objectivehtml.com/
 */
 
-Version 1.3.12 - 06/09/2012
---------------------------
+Version 1.3.13 - 06/27/2012
+---------------------------
+- (Bug Fix) Fixed an issue with return variables not getting properly decoded.
+- (Bug Fix) When the form was reset, the tagdata assumed a NULL value instead of $this->EE->TMPL->tagdata
+
+Version 1.3.12 - 06/19/2012
+---------------------------
 - (Bug Fix) Fixed an issue causing the error_handling property to not reset correctly.
 - (Bug Fix) Fixed an issue decoding the POST validation fields.
 
