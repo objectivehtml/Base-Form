@@ -9,8 +9,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.3.13
- * @build		20120627
+ * @version		1.4.0
+ * @build		20120815
  */
 
 if(!class_exists('Base_form'))
@@ -211,7 +211,7 @@ if(!class_exists('Base_form'))
 			$post = $this->add_prefix('post', $_POST);
 			
 			// If channel fields and an entry exists, parse the fields with the data
-			if($fields && $entry)
+			if($fields && is_array($entry))
 			{
 				$this->tagdata = $this->parse_fields($fields, $entry);				
 			}
@@ -365,13 +365,19 @@ if(!class_exists('Base_form'))
 					{
 						foreach(explode("\n", $row['field_list_items']) as $option_index => $option)
 						{
-							$vars[0]['options:'.$field_name][$option_index] = array(
+							
+							$values = explode('|', $vars[0][$field_name]);
+							
+							$checked = 'checked="checked"';
+							$selected = 'selected="selected"';
+							
+							$vars[0]['options:'.$field_name][] = array(
 								'option_value'	=> $option,
 								'option_name' 	=> $option,
-								'selected'		=> $vars[0][$field_name] == $option ? 'selected="selected"' : NULL,
-								'checked'		=> $vars[0][$field_name] == $option ? 'checked="checked"' : NULL
-							);							
-						}
+								'selected'		=> in_array($option, $values) ? $selected : NULL,
+								'checked'		=> in_array($option, $values) ? $checked : NULL
+							);										
+						}	
 					}
 				}
 			}
