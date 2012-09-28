@@ -10,6 +10,7 @@
 Version 1.4.1 - 09/28/2012
 ---------------------------
 - (Bug Fix) Fixed an issue that would result in an error if nested arrays were attempted to be encoded.
+- (Feature) Added two new methods, get() and post(), which retrieve and decode variables
 
 Version 1.4.0 - 08/01/2012
 ---------------------------

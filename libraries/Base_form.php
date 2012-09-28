@@ -215,7 +215,6 @@ if(!class_exists('Base_form'))
 			{
 				$this->tagdata = $this->parse_fields($fields, $entry);				
 			}
-			
 			// Parse the template variables
 			$this->tagdata = $this->parse(array($post));
 					
@@ -273,6 +272,40 @@ if(!class_exists('Base_form'))
 			return form_open($this->action, $params, $this->encode($hidden_fields)) . $this->tagdata . '</form>';
 		}
 		
+		public function get($field_name, $default = FALSE, $decode = TRUE)
+		{
+			$var = $this->EE->input->get($field_name);
+			
+			if($var && $decode)
+			{
+				$var = $this->decode($var);
+			}
+			
+			if($var === FALSE)
+			{
+				$var = $default;
+			}
+			
+			return $var;
+		}
+		
+		public function post($field_name, $default = FALSE, $decode = TRUE)
+		{
+			$var = $this->EE->input->post($field_name);
+			
+			if($var && $decode)
+			{
+				$var = $this->decode($var);
+			}
+			
+			if($var === FALSE)
+			{
+				$var = $default;
+			}
+			
+			return $var;
+		}
+		
 		public function encode($fields = array())
 		{
 			if(is_array($fields))
@@ -303,7 +336,14 @@ if(!class_exists('Base_form'))
 			{
 				foreach($fields as $index => $value)
 				{
-					$fields[$index] = $this->EE->encrypt->decode($value, $this->key);
+					if(is_array($value))
+					{
+						$fields[$index] = $this->decode($value);
+					}
+					else
+					{
+						$fields[$index] = $this->EE->encrypt->decode($value, $this->key);
+					}
 				}
 			}
 			else
