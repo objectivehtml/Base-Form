@@ -1,11 +1,15 @@
 /**
 * Base Form
 * Author: Justin Kimbrell (Objective HTML)
-* Version: 1.4.0
-* Build: 20120801
+* Version: 1.4.1
+* Build: 20120928
 * Copyright 2012 - All rights reserved
 * http://objectivehtml.com/
 */
+
+Version 1.4.1 - 09/28/2012
+---------------------------
+- (Bug Fix) Fixed an issue that would result in an error if nested arrays were attempted to be encoded.
 
 Version 1.4.0 - 08/01/2012
 ---------------------------

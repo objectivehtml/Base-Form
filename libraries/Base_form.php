@@ -9,8 +9,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.4.0
- * @build		20120815
+ * @version		1.4.1
+ * @build		20120928
  */
 
 if(!class_exists('Base_form'))
@@ -279,7 +279,14 @@ if(!class_exists('Base_form'))
 			{
 				foreach($fields as $index => $value)
 				{
-					$fields[$index] = $this->EE->encrypt->encode($value, $this->key);
+					if(is_array($value))
+					{
+						$fields[$index] = $this->encode($value);
+					}
+					else
+					{
+						$fields[$index] = $this->EE->encrypt->encode($value, $this->key);
+					}
 				}
 			}
 			else
