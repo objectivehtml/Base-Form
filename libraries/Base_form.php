@@ -9,8 +9,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.4.1
- * @build		20120928
+ * @version		1.4.2
+ * @build		20121021
  */
 
 if(!class_exists('Base_form'))
@@ -494,15 +494,15 @@ if(!class_exists('Base_form'))
 			{
 				$url = $this->decode($this->EE->input->post('return', TRUE));
 			}
-						
+				
 			if(isset($_POST['secure_return']))
 			{
 				$this->secure_return = (int) $this->decode($this->EE->input->post('secure_return', TRUE)) == 1 ? TRUE : FALSE;
 			}
-			
+				
 			if($group_id)
 			{
-				$group_redirect = $this->EE->input->post('group_'.$group_id.'_return');
+				$group_redirect = $this->decode($this->EE->input->post('group_'.$group_id.'_return'));
 				
 				if($group_redirect)
 				{
@@ -511,7 +511,7 @@ if(!class_exists('Base_form'))
 			}
 						
 			$url = $this->secure_url($url, $this->secure_return);
-						
+							
 			return $this->EE->functions->redirect($url);
 		}
 		
