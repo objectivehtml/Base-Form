@@ -1,11 +1,15 @@
 /**
 * Base Form
 * Author: Justin Kimbrell (Objective HTML)
-* Version: 1.4.2
-* Build: 20121021
+* Version: 1.4.3
+* Build: 20121102
 * Copyright 2012 - All rights reserved
 * http://objectivehtml.com/
 */
+
+Version 1.4.3 - 11/02/2012
+---------------------------
+- Added a new parameter that toggles the encoded/decoding of vars globally.
 
 Version 1.4.2 - 10/21/2012
 ---------------------------
