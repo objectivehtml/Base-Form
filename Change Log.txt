@@ -1,26 +1,41 @@
 /**
 * Base Form
 * Author: Justin Kimbrell (Objective HTML)
-* Version: 1.4.3
-* Build: 20121102
+* Version: 1.5.1
+* Build: 20121123
 * Copyright 2012 - All rights reserved
 * http://objectivehtml.com/
 */
 
-Version 1.4.3 - 11/02/2012
+1.5.1 - 11/23/2012
+------------------
+- Fixed a bug that prevented users from overriding the default return_var variable.
+
+1.5.0 - 11/16/2012
+------------------
+- Added new hidden_field(), hidden_fields(), set_hidden_field(), set_hidden_fields() methods
+- Fixed a bug that didn't use the validation field correctly in the open() method.
+- Renamed the ajax_response parameter to "json_response" with a legacy fallback.
+- Added new json() method to return a JSON response;
+
+1.4.4 - 11/04/2012
+---------------------------
+- Fixed a bug that causes empty attributes to be appended to the form element, thus invalidating it.
+
+1.4.3 - 11/02/2012
 ---------------------------
 - Added a new parameter that toggles the encoded/decoding of vars globally.
 
-Version 1.4.2 - 10/21/2012
+1.4.2 - 10/21/2012
 ---------------------------
 - Fixed a bug that caused different member group return URL's to not get decoded.
 
-Version 1.4.1 - 09/28/2012
+1.4.1 - 09/28/2012
 ---------------------------
 - (Bug Fix) Fixed an issue that would result in an error if nested arrays were attempted to be encoded.
 - (Feature) Added two new methods, get() and post(), which retrieve and decode variables
 
-Version 1.4.0 - 08/01/2012
+1.4.0 - 08/01/2012
 ---------------------------
 - (Bug Fix) Fixed an issue preventing the fields from getting parsed if entry was a blank array.
 - (Bug Fix) Fixed an inconsistency with the API inserting the correct validation_field in the hidden fields.
@@ -29,72 +44,72 @@ Version 1.4.0 - 08/01/2012
 - (Feature) Added ability to add any HTML attribute with an EE param, including custom data attributes.
 - (Feature) Added ability auto "selected" and "check" option values that are delimited with a bar.
 
-Version 1.3.13 - 06/27/2012
+1.3.13 - 06/27/2012
 ---------------------------
 - (Bug Fix) Fixed an issue with return variables not getting properly decoded.
 - (Bug Fix) When the form was reset, the tagdata assumed a NULL value instead of $this->EE->TMPL->tagdata
 
-Version 1.3.12 - 06/19/2012
+1.3.12 - 06/19/2012
 ---------------------------
 - (Bug Fix) Fixed an issue causing the error_handling property to not reset correctly.
 - (Bug Fix) Fixed an issue decoding the POST validation fields.
 
-Version 1.3.1 - 06/09/2012
+1.3.1 - 06/09/2012
 --------------------------
 - (Bug Fix) Fixed an issue that prevent errors from displaying if they weren't set to inline. (Always displayed errors inline.)
 
-Version 1.3.0 - 06/09/2012
+1.3.0 - 06/09/2012
 --------------------------
 - (Bug Fix) Fixed an issue with clear() method clearing errors when it shouldn't
 - (Feature) Added encoding/decoding to the core class.
 
-Version 1.2.4 - 05/10/2012
+1.2.4 - 05/10/2012
 --------------------------
 - Broke apart the current_url() into a secondary method called base_url().
 - Fixed an issue with ajax_response parameter not getting passed as boolean value.
 
-Version 1.2.3 - 04/26/2012
+1.2.3 - 04/26/2012
 --------------------------
 - Fixed an issue with the form action not returning to the correct page.
 
-Version 1.2.2 - 04/13/2012
+1.2.2 - 04/13/2012
 --------------------------
 - Fixed an that caused the form to validate when any form has been submitted.
 
-Version 1.2.1 - 04/10/2012
+1.2.1 - 04/10/2012
 --------------------------
 - Fixed an issue that caused the form to not work properly if the open() method was called more than once.
 - Added ability to return data via AJAX
 - Added an associative index to the global errors array
 
-Version 1.2.0 - 04/10/2012
+1.2.0 - 04/10/2012
 --------------------------
 - Fixed a long time bug that with the form action not pointing to the correct URL.
 
-Version 1.1.10 - 03/29/2012
+1.1.10 - 03/29/2012
 ---------------------------
 - Added the ability to change the form method.
 
-Version 1.1.9 - 02/24/2012
+1.1.9 - 02/24/2012
 --------------------------
 Added return_var and return_segment for better redirect fascilitation.
 
-Version 1.1.8
+1.1.8
 -------------
 Added a group_x_return parameter for dynamic redirecting based on member group.
 
-Version 1.1.7
+1.1.7
 -------------
 Fixed bugs that caused errors when anything other than port 80 was used.
 
-Version 1.1.6
+1.1.6
 -------------
 Fixed bugs that prevented form action not with localhost URL's.
 
-Version 1.1.5
+1.1.5
 -------------
 Fixed bugs that prevented form action from returning to correct location.
 
-Version 1.1.2
+1.1.2
 -------------
 First public commit.

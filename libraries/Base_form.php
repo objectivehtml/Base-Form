@@ -9,8 +9,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.4.3
- * @build		20121102
+ * @version		1.5.0
+ * @build		20121116
  */
 
 if(!class_exists('Base_form'))
@@ -20,6 +20,7 @@ if(!class_exists('Base_form'))
 		public $action            = '';
 		public $additional_params = array('novalidate', 'onsubmit');
 		public $ajax_response     = FALSE;
+		public $json_response	  = FALSE;
 		public $class             = '';
 		public $groups            = array();
 		public $hidden_fields     = array();
@@ -60,12 +61,12 @@ if(!class_exists('Base_form'))
 			$this->return 	= $this->current_url();
 			$this->tagdata 	= $this->EE->TMPL->tagdata;
 		}
-		
+			
 		public function clear($clear_errors = TRUE)
 		{
 			$this->action            = '';
 			$this->additional_params = array('novalidate', 'onsubmit');
-			$this->ajax_response     = FALSE;
+			$this->json_resonse      = $this->ajax_response = FALSE;
 			$this->class             = '';
 			$this->groups            = array();
 			$this->hidden_fields     = array();
@@ -100,7 +101,10 @@ if(!class_exists('Base_form'))
 
 			if($this->return_var)
 			{
-				$this->return   = $this->EE->input->get_post('return');
+				if($return_var = $this->EE->input->get_post($this->return_var))
+				{
+					$this->return = $return_var;
+				}
 			}
 			
 			if($this->return_segment)
@@ -110,7 +114,7 @@ if(!class_exists('Base_form'))
 				$this->return = '/'.implode('/', $segments);
 			}			
 
-			$this->ajax_response	= $this->param('ajax_response', $this->param('ajax', $this->ajax_response, TRUE), TRUE);
+			$this->json_response = $this->ajax_response	= $this->param('json_response', $this->param('ajax_response', $this->param('ajax', $this->ajax_response, TRUE), TRUE));
 		
 			$this->secure_action 	= $this->param('secure_action', $this->secure_action, TRUE);
 			$this->secure_return 	= $this->param('secure_return', $this->secure_return, TRUE);
@@ -118,7 +122,7 @@ if(!class_exists('Base_form'))
 			$this->action			= $this->secure_url($this->action, $this->secure_action);		
 			
 			$this->class			= $this->param('class', $this->class);
-			$this->groups			= $this->EE->channel_data->get_member_groups()->result_array();
+			$this->groups			= $this->EE->db->get('member_groups')->result_array();
 			
 			$this->error_handling 	= $this->param('error_handling', $this->error_handling);
 			$this->hidden_fields	= array_merge($this->hidden_fields, $hidden_fields);
@@ -144,13 +148,14 @@ if(!class_exists('Base_form'))
 			
 			// Merges the default hidden_fields			
 			$hidden_fields  = array_merge($this->hidden_fields, array(
-				'XID'	   => '{XID_HASH}',
-				'site_url' => $this->param('site_url') ? $this->param('site_url') : $this->EE->config->item('site_url'),
-				'required' 		=> $this->required,
-				'secure_return' => $this->secure_return,
-				'ajax_response'	=> (boolean) $this->ajax_response ? 'y' : 'n',
-				'base_form_submit' => TRUE,
-				'return'		=> $this->return
+				'XID'                   => '{XID_HASH}',
+				'site_url'              => $this->param('site_url') ? $this->param('site_url') : $this->EE->config->item('site_url'),
+				'required'              => $this->required,
+				'secure_return'         => $this->secure_return,
+				'ajax_response'         => (boolean) $this->json_response ? 'y' : 'n',
+				'json_response'         => (boolean) $this->json_response ? 'y' : 'n',
+				$this->validation_field => TRUE,
+				'return'                => $this->return
 			));
 			
 			// Loops through the member groups looking for dynamic redirects
@@ -269,6 +274,14 @@ if(!class_exists('Base_form'))
 				$this->EE->output->show_user_error('general', array_merge($this->field_errors, $this->errors));
 			}
 			
+			foreach($params as $param => $value)
+			{
+				if(empty($value))
+				{
+					unset($params[$param]);
+				}
+			}
+			
 			// Return the form
 			return form_open($this->action, $params, $this->encode($hidden_fields)) . $this->tagdata . '</form>';
 		}
@@ -359,6 +372,43 @@ if(!class_exists('Base_form'))
 			}
 			
 			return $fields;
+		}
+		
+		public function hidden_field($index, $value = '')
+		{
+			return $this->set_hidden_field($index, $value);
+		}
+		
+		public function set_hidden_field($index, $value = '')
+		{	
+			if(!is_array($index))
+			{
+				$field = array($index => $value);
+			}
+			else
+			{
+				$field = $index;	
+			}
+			
+			$this->hidden_fields = array_merge($this->hidden_fields, $field);
+		}
+		
+		public function hidden_fields($fields)
+		{
+			return $this->set_hidden_fields($fields);
+		}
+		
+		public function set_hidden_fields($fields)
+		{
+			if(!is_array($fields))
+			{
+				return;	
+			}
+			
+			foreach($fields as $index => $value)
+			{
+				$this->hidden_field($index, $value);
+			}
 		}
 		
 		public function set_rule($field_name, $rule)
@@ -488,11 +538,13 @@ if(!class_exists('Base_form'))
 			}
 		}
 		
-		public function required_field_check()
+		public function json($json)
 		{
-			echo 'test';exit();
+			header('Content-type: application/json');
+			echo json_encode($json);
+			exit();
 		}
-		
+			
 		public function redirect($group_id = FALSE)
 		{
 			$url = $this->return;
