@@ -9,8 +9,8 @@
  * @author		Justin Kimbrell
  * @copyright	Copyright (c) 2012, Justin Kimbrell
  * @link 		http://www.objectivehtml.com/libraries/base_form
- * @version		1.5.0
- * @build		20121116
+ * @version		1.5.1
+ * @build		20120103
  */
 
 if(!class_exists('Base_form'))
@@ -235,6 +235,7 @@ if(!class_exists('Base_form'))
 				{
 					$errors[0]['field_errors'][$x] 		= array('error' => $error);
 					$errors[0]['field_error:'.$field]   = $error;
+					$errors[0]['error:'.$field]   	    = $error;
 					$x++;
 				}
 				
@@ -250,6 +251,7 @@ if(!class_exists('Base_form'))
 				foreach($this->errors as $error)
 				{
 					$errors[0]['global_errors'][$x]	= array('error' => $error);
+					$errors[0]['global_error:'.$x]  = $error;
 					$x++;
 				}
 				
@@ -435,7 +437,9 @@ if(!class_exists('Base_form'))
 		
 		public function set_field_error($field, $message)
 		{
-			$this->field_errors[$this->decode($field)] = $message;
+			//$this->field_errors[$this->decode($field)] = $message;
+			
+			$this->field_errors[$field] = $message;
 		}
 		
 		public function parse_fields($field_data, $entry_data, $prefix = '')
